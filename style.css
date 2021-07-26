@@ -1,0 +1,136 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar-thumb {
+    background: #06544a;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-track {
+    background: #dfdfdf;
+}
+body {
+    background-color: coral;
+    width: 100%;
+    margin: 0;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+ul,
+li {
+    list-style: none;
+}
+h1 {
+    font-family: Courier;
+}
+.search_row {
+    display: flex;
+    margin-bottom: 25px;
+}
+.search_wrap #search {
+    padding: 7px 15px;
+    font-size: 18px;
+    line-height: 28px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 100%;
+}
+.search_wrap {
+    position: relative;
+    width: 560px;
+}
+.search_wrap #ul-all {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #fff;
+    max-height: 70vh;
+    overflow: auto;
+    width: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 5px;
+}
+.search_wrap #ul-all li {
+    cursor: pointer;
+    padding: 5px 10px;
+    border-bottom: 1px solid #ddd;
+}
+.search_wrap #ul-all li:hover {
+    background: cornflowerblue;
+    color: #fff;
+}
+#search-button {
+    background: #f5f5f5;
+    border: none;
+    color: #000;
+    padding: 7px 10px;
+    margin-left: 15px;
+    border-radius: 5px;
+}
+.tty {
+    background-color: bisque;
+    border-radius: 25px;
+}
+
+h3 {
+    text-align: center;
+    padding: 10px;
+}
+
+#refresh {
+    text-align: center;
+}
+
+#row-1 {
+    /* display: flex;
+    / display: none; /
+    / flex-direction: row; / */
+}
+
+.grid-container-1 {
+    display: grid;
+    grid-template-columns: 2fr 2fr 2fr;
+    grid-template-areas: "bn in min";
+}
+
+.bn {
+    grid-area: bn;
+}
+
+.in {
+    grid-area: in;
+}
+
+.min {
+    grid-area: min;
+}
+
+.bpck {
+    grid-area: bpck;
+}
+
+.gpck {
+    grid-area: gpck;
+}
+
+.sbd {
+    grid-area: sbd;
+}
+
+#row-2 {
+    /* display: flex;
+    flex-direction: row; */
+}
+
+.grid-container-2 {
+    display: grid;
+    grid-template-columns: 2fr 2fr 2fr;
+    grid-template-areas: "bpck gpck sbd";
+}

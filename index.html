@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <link href="style.css" rel="stylesheet" type="text/css" />
+        <title>Document</title>
+    </head>
+    <body>
+        <html>
+            <h1>SEARCH DATABASE</h1>
+            <div class="search_row">
+                <div class="search_wrap">
+                    <input
+                        id="search"
+                        placeholder="Search here"
+                        onkeyup="SearchData(this)"
+                    />
+                    <ul id="ul-all"></ul>
+                </div>
+                <button id="search-button" type="button">Search</button>
+            </div>
+            <div id="search-results" class="tty">
+                <h3>Click on a concept.</h3>
+                <!-- <ul id="ul-all">
+
+                </ul> -->
+                <div id="row-1" class="grid-container-1">
+                    <div id="bn" class="tty" class="bn grid-area">
+                        <h3>Brand Name</h3>
+                        <ul id="ul-bn"></ul>
+                    </div>
+                    <div id="in" class="tty" class="in grid-area">
+                        <h3>Ingredient</h3>
+                        <ul id="ul-in"></ul>
+                    </div>
+                    <div id="min" class="tty" class="min grid-area">
+                        <h3>Multiple Ingredients</h3>
+                        <ul id="ul-min"></ul>
+                    </div>
+                </div>
+                <div id="row-2" class="grid-container-2">
+                    <div id="bpck" class="tty" class="bpck grid-area">
+                        <h3>Brand Pack</h3>
+                        <ul id="ul-bpck"></ul>
+                    </div>
+                    <div id="gpck" class="tty" class="gpck grid-area">
+                        <h3>Generic Pack</h3>
+                        <ul id="ul-gpck"></ul>
+                    </div>
+                    <div id="sbd" class="tty" class="sbd grid-area">
+                        <h3>Semantic Branded Drug</h3>
+                        <ul id="ul-sbd"></ul>
+                    </div>
+                </div>
+                <div id="row-3">
+                    <div id="scd" class="tty"></div>
+                    <ul id="ul-scd"></ul>
+                </div>
+            </div>
+
+            <br />
+            <button id="btnCreate">Display Concept</button>
+            <div id="refresh">
+                <h5>Run query to refresh rxnorm concepts.</h5>
+                <button id="button" type="button">Refresh Database</button>
+            </div>
+        </html>
+        <script>
+            // TTY Divs
+            const ulAll = document.getElementById("ul-all");
+            const ulBn = document.getElementById("ul-bn");
+            const ulIn = document.getElementById("ul-in");
+            const ulMin = document.getElementById("ul-min");
+            const ulBpck = document.getElementById("ul-bpck");
+            const ulGpck = document.getElementById("ul-gpck");
+            const ulSbd = document.getElementById("ul-sbd");
+
+            async function displayTTYs(rxcui, name) {
+                console.log(
+                    "rxcui passed into displayTTYs --> ///",
+                    rxcui,
+                    "/// <-- rxcui passed into displayTTYs"
+                );
+                displayBn(rxcui, name);
+                displayIn(rxcui, name);
+                displayMin(rxcui, name);
+                displayBpck(rxcui, name);
+                displayGpck(rxcui, name);
+                displaySbd(rxcui, name);
+                displayScd(rxcui, name);
+            }
+
+            var myHeader = new Headers();
+            myHeader.append("Content-Type", "application/json");
+
+            async function displayBn(rxcui, name) {
+                while (ulBn.firstChild) ulBn.removeChild(ulBn.firstChild);
+                console.log("existing BN div cleared");
+
+                const result = await fetch("http://localhost:8000/bn", {
+                    method: "POST",
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        rxcuiHolder: rxcui,
+                        nameHolder: name,
+                    }),
+                });
+                const bnTtys = await result.json();
+                console.log("bnTtys", bnTtys);
+                bnTtys.result.forEach((concept) => {
+                    console.log("bnTtys forEach concept: ", concept);
+                    const li = document.createElement("li");
+                    li.textContent = concept.name;
+                    li.id = concept.rxcui;
+                    console.log("ACACACACCACACACCACACACAACCAACACACACACAC");
+                    li.addEventListener("click", async (event) => {
+                        const jsonRequest = {};
+                        jsonRequest.id = event.target.id;
+                        jsonRequest.textContent = event.target.textContent;
+                        const rxcui = jsonRequest.id;
+                        const name = jsonRequest.textContent;
+
+                        console.log(
+                            "BN jsonRequest.id (rxcui): ",
+                            rxcui + "\nBN jsonRequest.textContent (name):",
+                            name
+                        );
+
+                        displayTTYs(rxcui, name);
+                        // var list = document.getElementById("ul-all");
+                        // if (list.childElementCount > 0) {
+                        //     list.innerHTML = "";
+                        //     // list.childNodes.forEach((element,i) => {
+                        //     // });
+                        // }
+                        alert("Displaying TTYs for concept " + rxcui);
+                    });
+                    ulBn.appendChild(li);
+                });
+            }
+
+            async function displayIn(rxcui, name) {
+                while (ulIn.firstChild) ulIn.removeChild(ulIn.firstChild);
+                console.log("existing IN div cleared");
+
+                const result = await fetch("http://localhost:8000/in", {
+                    method: "POST",
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        rxcuiHolder: rxcui,
+                        nameHolder: name,
+                    }),
+                });
+                const inTtys = await result.json();
+                console.log("inTtys", inTtys);
+                inTtys.result.forEach((concept) => {
+                    console.log("inTtys forEach concept: ", concept);
+                    const li = document.createElement("li");
+                    li.textContent = concept.name;
+                    li.id = concept.rxcui;
+                    li.addEventListener("click", async (event) => {
+                        const jsonRequest = {};
+                        jsonRequest.id = event.target.id;
+                        jsonRequest.textContent = event.target.textContent;
+                        const rxcui = jsonRequest.id;
+                        const name = jsonRequest.textContent;
+
+                        console.log(
+                            "IN jsonRequest.id (rxcui): ",
+                            rxcui + "\nIN jsonRequest.textContent (name):",
+                            name
+                        );
+
+                        displayTTYs(rxcui, name);
+
+                        alert("Displaying TTYs for concept " + rxcui);
+                    });
+                    ulIn.appendChild(li);
+                });
+            }
+
+            async function displayMin(rxcui, name) {
+                while (ulMin.firstChild) ulMin.removeChild(ulMin.firstChild);
+                console.log("existing MIN div cleared");
+
+                const result = await fetch("http://localhost:8000/min", {
+                    method: "POST",
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        rxcuiHolder: rxcui,
+                        nameHolder: name,
+                    }),
+                });
+                const minTtys = await result.json();
+                console.log("minTtys", minTtys);
+                minTtys.result.forEach((concept) => {
+                    console.log("minTtys forEach concept: ", concept);
+                    const li = document.createElement("li");
+                    li.textContent = concept.name;
+                    li.id = concept.rxcui;
+                    li.addEventListener("click", async (event) => {
+                        const jsonRequest = {};
+                        jsonRequest.id = event.target.id;
+                        jsonRequest.textContent = event.target.textContent;
+                        const rxcui = jsonRequest.id;
+                        const name = jsonRequest.textContent;
+
+                        console.log(
+                            "MIN jsonRequest.id (rxcui): ",
+                            rxcui + "\nMIN jsonRequest.textContent (name):",
+                            name
+                        );
+
+                        displayTTYs(rxcui, name);
+
+                        alert("Displaying TTYs for concept " + rxcui);
+                    });
+                    ulMin.appendChild(li);
+                });
+            }
+
+            async function displayBpck(rxcui, name) {
+                while (ulBpck.firstChild) ulBpck.removeChild(ulBpck.firstChild);
+                console.log("existing BPCK div cleared");
+
+                const result = await fetch("http://localhost:8000/bpck", {
+                    method: "POST",
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        rxcuiHolder: rxcui,
+                        nameHolder: name,
+                    }),
+                });
+                const bpckTtys = await result.json();
+                console.log("bpckTtys", bpckTtys);
+                if (bpckTtys.length > 0) {
+                    bpckTtys.result.forEach((concept) => {
+                        console.log("bpckTtys forEach concept: ", concept);
+                        const li = document.createElement("li");
+                        li.textContent = concept.name;
+                        li.id = concept.rxcui;
+                        li.addEventListener("click", async (event) => {
+                            const jsonRequest = {};
+                            jsonRequest.id = event.target.id;
+                            jsonRequest.textContent = event.target.textContent;
+                            const rxcui = jsonRequest.id;
+                            const name = jsonRequest.textContent;
+
+                            console.log(
+                                "BPCK jsonRequest.id (rxcui): ",
+                                rxcui +
+                                    "\nBPCK jsonRequest.textContent (name):",
+                                name
+                            );
+
+                            displayTTYs(rxcui, name);
+
+                            alert("Displaying TTYs for concept " + rxcui);
+                        });
+                        ulBpck.appendChild(li);
+                    });
+                }
+            }
+
+            async function displayGpck(rxcui, name) {
+                while (ulGpck.firstChild) ulGpck.removeChild(ulGpck.firstChild);
+                console.log("existing GPCK div cleared");
+
+                const result = await fetch("http://localhost:8000/gpck", {
+                    method: "POST",
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        rxcuiHolder: rxcui,
+                        nameHolder: name,
+                    }),
+                });
+                const gpckTtys = await result.json();
+                console.log("gpckTtys", gpckTtys);
+                gpckTtys.result.forEach((concept) => {
+                    console.log("gpckTtys forEach concept: ", concept);
+                    const li = document.createElement("li");
+                    li.textContent = concept.name;
+                    li.id = concept.rxcui;
+                    li.addEventListener("click", async (event) => {
+                        const jsonRequest = {};
+                        jsonRequest.id = event.target.id;
+                        jsonRequest.textContent = event.target.textContent;
+                        const rxcui = jsonRequest.id;
+                        const name = jsonRequest.textContent;
+
+                        console.log(
+                            "GPCK jsonRequest.id (rxcui): ",
+                            rxcui + "\nGPCK jsonRequest.textContent (name):",
+                            name
+                        );
+
+                        displayTTYs(rxcui, name);
+
+                        alert("Displaying TTYs for concept " + rxcui);
+                    });
+                    ulGpck.appendChild(li);
+                });
+            }
+
+            async function displaySbd(rxcui, name) {
+                while (ulSbd.firstChild) ulSbd.removeChild(ulSbd.firstChild);
+                console.log("existing SBD div cleared");
+
+                const result = await fetch("http://localhost:8000/sbd", {
+                    method: "POST",
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        rxcuiHolder: rxcui,
+                        nameHolder: name,
+                    }),
+                });
+                const sbdTtys = await result.json();
+                console.log("sbdTtys", sbdTtys);
+                sbdTtys.result.forEach((concept) => {
+                    console.log("bpckTtys forEach concept: ", concept);
+                    const li = document.createElement("li");
+                    li.textContent = concept.name;
+                    li.id = concept.rxcui;
+                    li.addEventListener("click", async (event) => {
+                        const jsonRequest = {};
+                        jsonRequest.id = event.target.id;
+                        jsonRequest.textContent = event.target.textContent;
+                        const rxcui = jsonRequest.id;
+                        const name = jsonRequest.textContent;
+
+                        console.log(
+                            "SBD jsonRequest.id (rxcui): ",
+                            rxcui + "\nSBD jsonRequest.textContent (name):",
+                            name
+                        );
+
+                        displayTTYs(rxcui, name);
+
+                        alert("Displaying TTYs for concept " + rxcui);
+                    });
+                    ulSbd.appendChild(li);
+                });
+            }
+
+            function SearchData(e) {
+                console.log("this:L-----------------------------", e.value);
+                var searchVal = e.value;
+                var list = document.getElementById("ul-all");
+                if (list.childElementCount > 0) {
+                    list.innerHTML = "";
+                }
+
+                if (e.value.length >= 3) {
+                    let search = e.value;
+                    console.log("Fetch API");
+                    fetch("http://localhost:8000/" + search)
+                        .then((response) => {
+                            return response.json();
+                        })
+                        .then((data) => {
+                            data.forEach((concept) => {
+                                console.log("concept --> ", concept.name);
+                                const li = document.createElement("li");
+                                li.textContent = concept.name;
+                                li.id = concept.rxcui;
+                                li.addEventListener("click", async (event) => {
+                                    const jsonRequest = {};
+                                    jsonRequest.id = event.target.id;
+                                    jsonRequest.textContent =
+                                        event.target.textContent;
+                                    const rxcui = jsonRequest.id;
+                                    const name = jsonRequest.textContent;
+
+                                    console.log(
+                                        "ln 300 jsonRequest.id (rxcui): ",
+                                        rxcui +
+                                            "\nln 302 jsonRequest.textContent (name):",
+                                        name
+                                    );
+
+                                    displayTTYs(rxcui, name);
+                                    var list = document.getElementById(
+                                        "ul-all"
+                                    );
+                                    if (list.childElementCount > 0) {
+                                        list.innerHTML = "";
+                                        // list.childNodes.forEach((element,i) => {
+                                        // });
+                                    }
+                                    alert(
+                                        "Displaying TTYs for concept " + rxcui
+                                    );
+                                });
+                                ulAll.appendChild(li);
+                            });
+                        });
+                }
+            }
+
+            // Ronak End********************
+
+            // CLICK EVENT for searching
+            const searchButton = document.getElementById("search-button");
+            searchButton.addEventListener("click", (event) => {
+                console.log("SEARCH BUTTON CLICKED");
+                const search = document.getElementById("search").value;
+
+                // fetch concept rxcuis?? from "/" endpoint
+                fetch("http://localhost:8000/" + search)
+                    .then((response) => {
+                        return response.json();
+                    })
+                    .then((data) => {
+                        data.forEach((concept) => {
+                            console.log("concept --> ", concept.name);
+                            const li = document.createElement("li");
+                            li.textContent = concept.name;
+                            li.id = concept.rxcui;
+                            li.addEventListener("click", async (event) => {
+                                const jsonRequest = {};
+                                jsonRequest.id = event.target.id;
+                                jsonRequest.textContent =
+                                    event.target.textContent;
+                                const rxcui = jsonRequest.id;
+                                const name = jsonRequest.textContent;
+
+                                // const name =
+                                console.log(
+                                    "ln 353 jsonRequest.id (rxcui): ",
+                                    rxcui
+                                );
+                                console.log(
+                                    "ln 355 jsonRequest.textContent (name):",
+                                    name
+                                );
+                                displayTTYs(rxcui, name);
+                                alert("Displaying TTYs for concept " + rxcui);
+                            });
+                            ulAll.appendChild(li);
+                        });
+                    });
+
+                async function displayTTYs(rxcui, name) {
+                    console.log(
+                        "rxcui passed into displayTTYs --> ///",
+                        rxcui,
+                        "/// <-- rxcui passed into displayTTYs"
+                    );
+                    displayBn(rxcui, name);
+                    displayIn(rxcui, name);
+                    displayMin(rxcui);
+                    displayBpck(rxcui, name);
+                    displayGpck(rxcui, name);
+                    displaySbd(rxcui, name);
+                    displayScd(rxcui, name);
+                }
+
+                var myHeader = new Headers();
+                myHeader.append("Content-Type", "application/json");
+
+                async function displayIn(rxcui, name) {
+                    while (ulIn.firstChild) ulIn.removeChild(ulIn.firstChild);
+                    console.log("existing page cleared");
+
+                    const result = await fetch("http://localhost:8000/in", {
+                        method: "POST",
+                        headers: {
+                            Accept: "application/json",
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            rxcuiHolder: rxcui,
+                            nameHolder: name,
+                        }),
+                    });
+                    const inTtys = await result.json();
+                    console.log("inTtys", inTtys);
+                    inTtys.result.forEach((concept) => {
+                        console.log("inTtys forEach concept: ", concept);
+                        const li = document.createElement("li");
+                        li.textContent = concept.name;
+                        li.id = concept.rxcui;
+                        li.addEventListener("click", async (event) => {
+                            const jsonRequest = {};
+                            jsonRequest.id = event.target.id;
+                            jsonRequest.textContent = event.target.textContent;
+                            const rxcui = jsonRequest.id;
+                            const name = jsonRequest.textContent;
+
+                            console.log(
+                                "IN jsonRequest.id (rxcui): ",
+                                rxcui + "\nIN jsonRequest.textContent (name):",
+                                name
+                            );
+
+                            displayTTYs(rxcui, name);
+                            var list = document.getElementById("ul-all");
+                            if (list.childElementCount > 0) {
+                                list.innerHTML = "";
+                                // list.childNodes.forEach((element,i) => {
+                                // });
+                            }
+                            alert("Displaying TTYs for concept " + rxcui);
+                        });
+                        ulIn.appendChild(li);
+                    });
+                }
+
+                async function displayBn(rxcui, name) {
+                    while (ulBn.firstChild) ulBn.removeChild(ulBn.firstChild);
+                    console.log("existing page cleared");
+
+                    const result = await fetch("http://localhost:8000/bn", {
+                        method: "POST",
+                        headers: {
+                            Accept: "application/json",
+                            "Content-Type": "application/json",
+                        },
+                        // headers: myHeader,
+                        body: JSON.stringify({
+                            rxcuiHolder: rxcui,
+                            nameHolder: name,
+                        }),
+                    });
+                    const bnTtys = await result.json();
+                    // console.log("RESULT of BN----->", bnTtys);
+                    bnTtys.result.forEach((concept) => {
+                        console.log(concept);
+                        // console.log("concept --> ", concept.name);
+                        const li = document.createElement("li");
+                        li.textContent = concept.name;
+                        li.id = concept.rxcui;
+                        // li.addEventListener("click", async (event) => {
+                        //     const jsonRequest = {};
+                        //     jsonRequest.id = event.target.id;
+                        //     const rxcui = jsonRequest.id;
+                        //     console.log("jsonRequest.id: ", rxcui);
+                        //     displayTTYs(rxcui);
+                        //     alert("Displaying TTYs for concept " + rxcui);
+                        // });
+                        ulBn.appendChild(li);
+                        // if (concept.tty === "BN") {
+                        //     ulBn.appendChild(li);
+                        // }
+                    });
+                }
+
+                async function displayMin(rxcui) {}
+                async function displayBpck(rxcui, name) {
+                    while (ulBpck.firstChild)
+                        ulBpck.removeChild(ulBpck.firstChild);
+                    console.log("existing BPCK div cleared");
+
+                    const result = await fetch("http://localhost:8000/bpck", {
+                        method: "POST",
+                        headers: {
+                            Accept: "application/json",
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            rxcuiHolder: rxcui,
+                            nameHolder: name,
+                        }),
+                    });
+                    const bpckTtys = await result.json();
+                    console.log("bpckTtys", bpckTtys);
+                    bpckTtys.result.forEach((concept) => {
+                        console.log("bpckTtys forEach concept: ", concept);
+                        const li = document.createElement("li");
+                        li.textContent = concept.name;
+                        li.id = concept.rxcui;
+                        ulBpck.appendChild(li);
+                    });
+                }
+
+                async function displayGpck(rxcui, name) {
+                    while (ulGpck.firstChild)
+                        ulGpck.removeChild(ulGpck.firstChild);
+                    console.log("existing GPCK div cleared");
+
+                    const result = await fetch("http://localhost:8000/gpck", {
+                        method: "POST",
+                        headers: {
+                            Accept: "application/json",
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            rxcuiHolder: rxcui,
+                            nameHolder: name,
+                        }),
+                    });
+                    const gpckTtys = await result.json();
+                    console.log("gpckTtys", gpckTtys);
+                    gpckTtys.result.forEach((concept) => {
+                        console.log("gpckTtys forEach concept: ", concept);
+                        const li = document.createElement("li");
+                        li.textContent = concept.name;
+                        li.id = concept.rxcui;
+                        ulGpck.appendChild(li);
+                    });
+                }
+
+                async function displaySbd(rxcui, name) {
+                    while (ulSbd.firstChild)
+                        ulSbd.removeChild(ulSbd.firstChild);
+                    console.log("existing SBD div cleared");
+
+                    const result = await fetch("http://localhost:8000/sbd", {
+                        method: "POST",
+                        headers: {
+                            Accept: "application/json",
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            rxcuiHolder: rxcui,
+                            nameHolder: name,
+                        }),
+                    });
+                    const sbdTtys = await result.json();
+                    console.log("sbdTtys", sbdTtys);
+                    sbdTtys.result.forEach((concept) => {
+                        console.log("bpckTtys forEach concept: ", concept);
+                        const li = document.createElement("li");
+                        li.textContent = concept.name;
+                        li.id = concept.rxcui;
+                        ulSbd.appendChild(li);
+                    });
+                }
+
+                /*           
+       ,
+                    const bpckTtys = await result.json();
+                    console.log("bpckTtys", bpckTtys);
+                    bpckTtys.result.forEach((concept) => {
+                        console.log("bpckTtys forEach concept: ", concept);
+                        const li = document.createElement("li");
+                        li.textContent = concept.name;
+                        li.id = concept.rxcui;
+                        ulBpck.appendChild(li);
+                    });*/
+
+                async function displayScd(rxcui, name) {
+                    while (ulScd.firstChild)
+                        ulScd.removeChild(ulScd.firstChild);
+                    console.log("existing SCD div cleared");
+
+                    const result = await fetch("http://localhost:8000/scd", {
+                        method: "POST",
+                        headers: {
+                            Accept: "application/json",
+                            "Content-Type": "application/json",
+                        },
+                        // headers: myHeader,
+                        body: JSON.stringify({
+                            rxcuiHolder: rxcui,
+                            nameHolder: name,
+                        }),
+                    });
+                }
+            });
+
+            // CLICK EVENT for posting term types to back end endpoint /termTypes
+            const btnCreate = document.getElementById("button");
+            btnCreate.addEventListener("click", (event) => {
+                // fill all_concepts table
+                fetch("http://localhost:8000/search")
+                    .then((response) => {
+                        return response.json();
+                    })
+                    .then((bookData) => {
+                        const reqBody = {
+                            bookData,
+                        };
+                        const formdata = new FormData();
+                        formdata.append("bookData", bookData);
+                        var myHeader = new Headers();
+                        myHeader.append("Content-Type", "application/json");
+                        return fetch("http://localhost:8000/allProperties", {
+                            method: "POST",
+                            headers: myHeader,
+                            body: JSON.stringify(reqBody),
+                        });
+                    })
+                    .then((result) => {
+                        console.log("client result", result);
+                        if (result.success) {
+                            console.log("data for /allProperties is saved");
+                        }
+                    });
+                alert("Created!");
+            });
+        </script>
+
+        <style></style>
+    </body>
+</html>
